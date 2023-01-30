@@ -69,8 +69,6 @@ class LoginController extends Controller
                 ], 400);
             }
             
-            
-            
             if (Hash::check($password, $user->password)) { // check hash password
                 // time to live token
                 $exp_time = time() + (60 * 60); // token will expire in 1 hour
@@ -87,19 +85,24 @@ class LoginController extends Controller
                 $user->update([
                     'api_token' => $token
                 ]);
+                $result = $user;
+                unset($result['api_token']);
                 return response()->json([
-                    'success' => true,
-                    'pesan' => 'login berhasil',
-                    'exp_time' => date('Y-m-d H:i:s', $exp_time),
-                    'data' => $user
-                ]);
+                'success' => true,
+                'pesan' => 'login berhasil',
+                'exp_time' => date('Y-m-d H:i:s', $exp_time),
+                'data' => $result,
+                'api_token'=>$token,
+            ]);
             }else {
                 return response()->json([
                     'success' => false,
                     'pesan' => 'login gagal',
                     'data' => ''
                 ]);
-            }        
+                
+            }      
+              
         }
 
 
@@ -119,6 +122,7 @@ class LoginController extends Controller
                 ], 400);
             }
 
+            
             //ambil user dengan token yang sesuai
             $user = User::where('api_token', $request->api_token)->first();
 
@@ -130,9 +134,21 @@ class LoginController extends Controller
                     'data' => ''
                 ], 400);
             }
+            // $user->update(['api_token' => '']);
+            $exp_time = time() + (60 * 60); // token will expire in 1 hour
+            $payload = [
+                'sub' => '1234567890',
+                'iat' => time(),
+                'exp' => $exp_time
+            ];
+            $secret = env('JWT_SECRET');
+            $algorithm = 'HS256';
+            $new_token = JWT::encode($payload, $secret, $algorithm);
             $user_name = $user->nama_user;
-            //update user dengan api_token kosong
-            $user->update(['api_token' => '']);
+            //update user dengan api_token terupdate
+            $user->update([
+            'api_token' => ''
+            ]);
 
             return response()->json([
                 'success' => true,
