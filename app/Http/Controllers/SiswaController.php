@@ -139,10 +139,7 @@ class SiswaController extends Controller
                 'message' => 'Kolom belum di isi atau Nama sudah ada',
                 'data'   => $valid->errors()
             ],401);
-            
-    
         } else {
-    
             $post = Siswa::whereId($id)->update([
                 'nama' => $request->input('nama'),
                 'kelas'   => $request->input('kelas'),
