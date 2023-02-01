@@ -7,6 +7,8 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 use Carbon\Carbon;
 use Firebase\JWT\JWT;
+use Firebase\JWT\Key;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 use Tymon\JWTAuth\Exceptions\JWTException;
@@ -74,10 +76,12 @@ class LoginController extends Controller
                 $exp_time = time() + (60 * 60); // token will expire in 1 hour
             
                 $payload = [
-                    'sub' => '1234567890',
+                    'sub' => $user->id,
                     'iat' => time(),
                     'exp' => time() + (60*60)
+                    
                 ];
+                
                 
                 $secret = env('JWT_SECRET');
                 $algorithm = 'HS256';
@@ -156,4 +160,29 @@ class LoginController extends Controller
                 'data' => "Data dengan Nama_user = $user_name berhasil logout"
             ]);
         }
+
+        public function changepw (Request $request)
+        {
+            $token= request()->bearerToken();
+            $credential = JWT::decode($token, new Key(env('JWT_SECRET'),'HS256'));
+            $id=$credential->sub ;
+            $bebas = DB::select("select password from users where id=$id");
+            $bebas = $bebas[0]->password;
+    
+            $currentpw = $_POST['currentpw'];
+          
+            
+            if (Hash::check($currentpw, $bebas)) { 
+                dd("berhasil");
+                return response()->json([
+                    'success' => true,
+                    'pesan' => 'valid',
+                ], 201);
+            }else{
+                return response()->json([
+                    'success' => false,
+                    'pesan' => 'tidak valid',
+                ], 400);
+            }
+    }
 }

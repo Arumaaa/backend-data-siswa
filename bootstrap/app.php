@@ -111,6 +111,8 @@ $app->register(App\Providers\AuthServiceProvider::class);
 // $app->register(App\Providers\EventServiceProvider::class);
 $app->register(App\Providers\CatchAllOptionsRequestsProvider::class);
 $app->register(Tymon\JWTAuth\Providers\LumenServiceProvider::class);
+$app->register(Illuminate\Auth\Passwords\PasswordResetServiceProvider::class);
+
 
 // Uncomment this line
 
@@ -119,6 +121,7 @@ $app->register(Tymon\JWTAuth\Providers\LumenServiceProvider::class);
 
 
 class_alias(Tymon\JWTAuth\JWT::class, 'JWT');
+class_alias(Illuminate\Support\Facades\Password::class, 'password');
 
 /*
 |--------------------------------------------------------------------------

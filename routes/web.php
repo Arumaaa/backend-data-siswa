@@ -18,6 +18,9 @@ use Illuminate\Http\Request;
 $router->get('/', function () use ($router) {
     return $router->app->version();
 });
+$router->post('/forgot', ['uses' => 'AuthController@forgotPassword']);
+
+$router->post('siswa/change',['uses' => 'LoginController@changepw']);
 
 $router->post('api/logout', ['middleware' => 'auth','uses' => 'LoginController@logout']);
 
@@ -29,6 +32,8 @@ $router->group(['prefix'=>'api','middleware'=>'auth'] , function() use ($router)
 
 $router->get('siswa',['uses' => 'SiswaController@index']);
 
+
+
 $router->get('siswa/{id}',['uses' =>'SiswaController@show']);
 
 $router->delete('siswa/delete/{id}',['uses' => 'SiswaController@destroy']);
@@ -36,5 +41,7 @@ $router->delete('siswa/delete/{id}',['uses' => 'SiswaController@destroy']);
 $router->put('siswa/update/{id}',['uses' => 'SiswaController@update']);
 
 $router->post('siswa/tambah',['uses' => 'SiswaController@create']);
+
+
 
 });
